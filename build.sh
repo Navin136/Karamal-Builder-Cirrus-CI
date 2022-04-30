@@ -52,7 +52,7 @@ echo "Pulling recent changes"
 cd $WORK_DIR/kernel && git pull
 cd ../
 else
-git clone --depth=1 https://github.com/navin136/android_kernel_asus_X00TD $WORK_DIR/kernel
+git clone --depth=1 https://github.com/navin136/kernel_asus_sdm660-2 -b test $WORK_DIR/kernel
 fi
 if [ -d $WORK_DIR/toolchains/gcc64 ] && [ -d $WORK_DIR/toolchains/gcc32 ]
 then
@@ -68,7 +68,7 @@ else
 cd $WORK_DIR/toolchains
 mkdir clang
 cd clang
-wget https://hitarashi.sayeed205.workers.dev/0:/clang-r416183b1.tar.gz
+wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android12-release/clang-r416183b1.tar.gz
 tar -xvzf clang-r416183b1.tar.gz
 fi
 cd $WORK_DIR/kernel
@@ -91,7 +91,7 @@ export SUBARCH=arm64
 export PATH="$WORK_DIR/toolchains/gcc64/bin/:$WORK_DIR/toolchains/gcc32/bin/:$WORK_DIR/toolchains/clang/bin/:$PATH"
 cd $WORK_DIR/kernel
 make clean && make mrproper
-make O=out X00TD_defconfig
+make O=out X00T_defconfig
 make -j$(nproc --all) O=out \
       CLANG_TRIPLE=aarch64-linux-gnu- \
       CROSS_COMPILE=aarch64-linux-android- \

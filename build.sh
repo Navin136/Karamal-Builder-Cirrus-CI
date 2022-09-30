@@ -52,14 +52,14 @@ echo "Pulling recent changes"
 cd $WORK_DIR/kernel && git pull
 cd ../
 else
-git clone --depth=1 https://github.com/navin136/kernel_asus_sdm660-2 -b test $WORK_DIR/kernel
+git clone --depth=1 https://github.com/navin136/kernel_asus_sdm660 $WORK_DIR/kernel
 fi
 if [ -d $WORK_DIR/toolchains/gcc64 ] && [ -d $WORK_DIR/toolchains/gcc32 ]
 then
 echo "gcc dir exists"
 else
-git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android12-release $WORK_DIR/toolchains/gcc64
-git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android12-release $WORK_DIR/toolchains/gcc32
+git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android12L-release $WORK_DIR/toolchains/gcc64
+git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android12L-release $WORK_DIR/toolchains/gcc32
 fi
 if [ -d $WORK_DIR/toolchains/clang ]
 then
@@ -68,8 +68,8 @@ else
 cd $WORK_DIR/toolchains
 mkdir clang
 cd clang
-wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android12-release/clang-r416183b1.tar.gz
-tar -xvzf clang-r416183b1.tar.gz
+wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android13-release/clang-r450784d.tar.gz
+tar -xvzf clang-r450784d.tar.gz
 fi
 cd $WORK_DIR/kernel
 

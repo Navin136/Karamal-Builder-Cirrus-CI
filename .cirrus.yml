@@ -5,7 +5,7 @@ env:
 
 task:
   name: "Velocity-Kernel-Builder"
-  timeout_in: 69m  
+  timeout_in: 20m
   container:
       image: navin136/builder:latest
       cpu: 8

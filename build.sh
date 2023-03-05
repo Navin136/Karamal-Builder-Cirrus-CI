@@ -40,7 +40,7 @@ if [ -d $WORK_DIR/Anykernel ]
 then
 echo "Anykernel Directory Already Exists"
 else
-git clone --depth=1 https://github.com/navin136/AnyKernel3 $WORK_DIR/Anykernel
+git clone --depth=1 https://github.com/karthik1896/AnyKernel3 $WORK_DIR/Anykernel -b x3
 fi
 if [ -d $WORK_DIR/kernel ]
 then
@@ -49,7 +49,7 @@ echo "Pulling recent changes"
 cd $WORK_DIR/kernel && git pull
 cd ../
 else
-git clone --depth=1 https://github.com/navin136/kernel_asus_sdm660 $WORK_DIR/kernel
+git clone --depth=1 https://github.com/karthik1896/kernel_x3 $WORK_DIR/kernel
 fi
 if [ -d $WORK_DIR/toolchains/trb_clang-17 ]
 then
@@ -63,7 +63,7 @@ fi
 cd $WORK_DIR/kernel
 
 # Info
-DEVICE="Asus Zenfone Max Pro M1 (X00TD)"
+DEVICE="Realme X3"
 DATE=$(TZ=GMT-5:30 date +%d'-'%m'-'%y'_'%I':'%M)
 VERSION=$(make kernelversion)
 DISTRO=$(source /etc/os-release && echo $NAME)
@@ -73,34 +73,53 @@ COMMIT_LOG=$(git log --oneline -n 1)
 COMPILER=$($WORK_DIR/toolchains/trb_clang-17/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
 
 #Starting Compilation
-msg "<b>=====VELOCITY Kernel=====</b>%0A<b>Hey @Navin136 Kernel Build Triggered !!</b>%0A<b>Device: </b><code>$DEVICE</code>%0A<b>Kernel Version: </b><code>$VERSION</code>%0A<b>Date: </b><code>$DATE</code>%0A<b>Host Distro: </b><code>$DISTRO</code>%0A<b>Host Core Count: </b><code>$CORES</code>%0A<b>Compiler Used: </b><code>$COMPILER</code>%0A<b>Branch: </b><code>$BRANCH</code>%0A<b>Last Commit: </b><code>$COMMIT_LOG</code>"
+msg "<b>=====ZEUS X3 Kernel=====</b>%0A<b>Hey @le_heisenberg Kernel Build Triggered !!</b>%0A<b>Device: </b><code>$DEVICE</code>%0A<b>Kernel Version: </b><code>$VERSION</code>%0A<b>Date: </b><code>$DATE</code>%0A<b>Host Distro: </b><code>$DISTRO</code>%0A<b>Host Core Count: </b><code>$CORES</code>%0A<b>Compiler Used: </b><code>$COMPILER</code>%0A<b>Branch: </b><code>$BRANCH</code>%0A<b>Last Commit: </b><code>$COMMIT_LOG</code>"
 BUILD_START=$(date +"%s")
 export ARCH=arm64
 export SUBARCH=arm64
 export PATH="$WORK_DIR/toolchains/trb_clang-17/bin/:$PATH"
 cd $WORK_DIR/kernel
 make clean && make mrproper
-make O=out X00TD_defconfig
-make -j$(nproc --all) O=out \
-      CROSS_COMPILE=aarch64-linux-gnu- \
-      CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-      CC=clang | tee log.txt
+make O=out x3_defconfig
+#make -j$(nproc --all) O=out LLVM=1\
+#		ARCH=arm64 \
+#		AS="llvm-as" \
+#		CC="clang" \
+#		LD="ld.lld" \
+#		AR="llvm-ar" \
+#		NM="llvm-nm" \
+#		STRIP="llvm-strip" \
+#		OBJCOPY="llvm-objcopy" \
+#		OBJDUMP="llvm-objdump" \
+#		CLANG_TRIPLE=aarch64-linux-gnu- \
+#		CROSS_COMPILE="clang" \
+#               CROSS_COMPILE_COMPAT="clang" \
+#              CROSS_COMPILE_ARM32="clang" | tee log.txt
+make -j$(nproc --all) O=out LLVM=1\
+			CROSS_COMPILE=aarch64-linux-gnu- \
+			CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+			CC=clang \
+			AR=llvm-ar \
+			OBJDUMP=llvm-objdump \
+			STRIP=llvm-strip | tee log.txt
 
 #Zipping Into Flashable Zip
-if [ -f out/arch/arm64/boot/Image.gz-dtb ]
+if [ -f out/arch/arm64/boot/Image.gz ] && [ -f out/arch/arm64/boot/dtbo.img ] && [ -f out/arch/arm64/boot/dts/qcom/sm8150-v2.dtb ]
 then
-cp out/arch/arm64/boot/Image.gz-dtb $WORK_DIR/Anykernel
+cp out/arch/arm64/boot/Image.gz $WORK_DIR/Anykernel
+cp out/arch/arm64/boot/dtbo.img $WORK_DIR/Anykernel
+cp out/arch/arm64/boot/dts/qcom/sm8150-v2.dtb $WORK_DIR/Anykernel/dtb
 cd $WORK_DIR/Anykernel
-zip -r9 VELOCITY-$DATE.zip * -x .git README.md */placeholder
-cp $WORK_DIR/Anykernel/VELOCITY-$DATE.zip $WORK_DIR/
+zip -r9 ZEUS-$DATE.zip * -x .git README.md */placeholder
+cp $WORK_DIR/Anykernel/ZEUS-$DATE.zip $WORK_DIR/
 rm $WORK_DIR/Anykernel/Image.gz-dtb
-rm $WORK_DIR/Anykernel/VELOCITY-$DATE.zip
+rm $WORK_DIR/Anykernel/ZEUS-$DATE.zip
 BUILD_END=$(date +"%s")
 DIFF=$((BUILD_END - BUILD_START))
 
 #Upload Kernel
 
-file "$WORK_DIR/VELOCITY-$DATE.zip" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
+file "$WORK_DIR/ZEUS-$DATE.zip" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
 
 else
 file "$WORK_DIR/kernel/log.txt" "Build Failed and took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"

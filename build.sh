@@ -81,11 +81,13 @@ export PATH="$WORK_DIR/toolchains/trb_clang-17/bin/:$PATH"
 cd $WORK_DIR/kernel
 make clean && make mrproper
 make O=out X00TD_defconfig
-make -j$(nproc --all) O=out \
-      CROSS_COMPILE=aarch64-linux-gnu- \
-      CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-      CC=clang | tee log.txt
-
+make -j$(nproc --all) O=out LLVM=1\
+			CROSS_COMPILE=aarch64-linux-gnu- \
+			CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+			CC=clang \
+			AR=llvm-ar \
+			OBJDUMP=llvm-objdump \
+			STRIP=llvm-strip 2>&1| tee log.txt
 #Zipping Into Flashable Zip
 if [ -f out/arch/arm64/boot/Image.gz-dtb ]
 then
